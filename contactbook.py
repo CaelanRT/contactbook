@@ -1,5 +1,3 @@
-
-import sys
 import argparse
 import os
 import json
@@ -36,16 +34,18 @@ class Contact:
         }
         
     
-
+#add contact method
 def addContact(args):
     contact = Contact(args.name, args.phone, args.birthday)
     contacts.append(contact)
     print(f'Added {contact.name} to the contact book')
-    
+
+#list contacts method
 def listContact(args):
     for contact in contacts:
         print(contact)
 
+#delete contacts method
 def deleteContact(args):
     for contact in contacts:
         if contact.name == args.name:
@@ -108,6 +108,3 @@ if hasattr(args, 'func'):
 
     with open(file_path, "w") as f:
         json.dump(diclist, f, indent=4, sort_keys=True)
-
-
-

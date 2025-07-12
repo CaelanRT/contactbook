@@ -46,6 +46,13 @@ def listContact(args):
     for contact in contacts:
         print(contact)
 
+def deleteContact(args):
+    for contact in contacts:
+        if contact.name == args.name:
+            contacts.remove(contact)
+    
+    print(f'Deleted {args.name} to the contact book')
+
 #your instance variables
 contacts = []
 
@@ -80,8 +87,13 @@ add_parser.add_argument('--birthday', required=True)
 #list parser
 list_parser = subparsers.add_parser('list', help='list the contacts in the contact book')
 
+#delete parser
+delete_parser = subparsers.add_parser('delete', help='delete a contact')
+delete_parser.add_argument('--name', required=True)
+
 add_parser.set_defaults(func=addContact)
 list_parser.set_defaults(func=listContact)
+delete_parser.set_defaults(func=deleteContact)
 
 args = parser.parse_args()
 

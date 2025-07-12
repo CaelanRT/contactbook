@@ -1,10 +1,5 @@
 [
     {
-        "birthday": "birthday",
-        "name": "name",
-        "phone": "phone"
-    },
-    {
         "birthday": "20-20-20",
         "name": "steve",
         "phone": "123456789"

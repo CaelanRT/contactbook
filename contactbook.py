@@ -5,14 +5,15 @@ import os
 import json
 
 #make a command line tool with flags that is a contact book that will also output birthdays coming up
-#have it persist and read to and from a file (json file)
 #make it a script so that it can be run from anywehre in your command prompt
+#add ability to remove contacts
 
 file_path = "contactbook.json"
 
 #creates the json file if it doesn't exist on first run
 if not os.path.exists(file_path):
-    f = open(file_path, "xt")
+    with open(file_path, "xt") as f:
+        f.write("[]")
 
 class Contact:
 
@@ -28,9 +29,12 @@ class Contact:
     
     #setting the attributes to a dictionary to serialize
     def to_dict(self):
-        "name" = self.name
-        "phone" = self.phoneNumber
-        "birthday" = self.birthday
+        return {
+            'name': self.name,
+            'phone': self.phoneNumber,
+            'birthday': self.birthday
+        }
+        
     
 
 def addContact(args):
@@ -38,18 +42,23 @@ def addContact(args):
     contacts.append(contact)
     print(f'Added {contact.name} to the contact book')
     
-def listContact():
+def listContact(args):
     for contact in contacts:
-        print(contact.__str__())
+        print(contact)
 
 #your instance variables
 contacts = []
 
-#load the data from the file into contacts
-loadedlist = json.load()
+#load the data from the file a list
+try:
+    with open(file_path, "r") as f:
+        loadedlist = json.load(f)
+except json.JSONDecodeError:
+    loadedlist = []
 
+#for each item, create an object and append it to the contacts list
 for item in loadedlist:
-    contact = Contact(item.name, item.phone, item.birthday)
+    contact = Contact(item["name"], item["phone"], item["birthday"])
     contacts.append(contact)
 
 #main parser
@@ -58,10 +67,6 @@ parser = argparse.ArgumentParser(
                     description='CLI Contact Book that lists your contacts with: name, phone number and birthday. Also has functionality to tell you whose birthdays are coming up based on a specified amount of days',
                     epilog='lmfao')
 
-#arguments for main parser
-parser.add_argument('--name', help='name')
-parser.add_argument('--phone', help='phone')
-parser.add_argument('--birthday', help='birthday')
 
 #subparser
 subparsers = parser.add_subparsers(dest="command")
@@ -83,5 +88,14 @@ args = parser.parse_args()
 if hasattr(args, 'func'):
     args.func(args)
 
-#writing the list back to file to persist the data
+    #writing the list back to file to persist the data if there was a change
+    diclist = []
+    for item in contacts:
+        dic = item.to_dict()
+        diclist.append(dic)
+
+    with open(file_path, "w") as f:
+        json.dump(diclist, f, indent=4, sort_keys=True)
+
+
 

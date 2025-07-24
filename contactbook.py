@@ -2,6 +2,7 @@ import argparse
 import os
 import json
 from dateutil import parser as date_parser
+from datetime import datetime, timedelta
 
 #make a command line tool with flags that is a contact book that will also output birthdays coming up
 #make it a script so that it can be run from anywehre in your command prompt
@@ -61,8 +62,19 @@ def deleteContact(args):
     print(f'Deleted {args.name} to the contact book')
 
 def nextBirthday(args):
-    brange = args.nextbirthday
-    #for contact in contacts:
+    days = int(args.days)
+    current_date = datetime.now()
+    future_date = datetime.now() + timedelta(days=days)
+    birthday_count = 0
+
+    for contact in contacts:
+        if (contact.birthday > current_date and contact.birthday < future_date):
+            print(f'{contact.name} has a birthday in the next {days} days: {contact.birthday}')
+            birthday_count+=1
+        
+    if (birthday_count == 0):
+        print(f'No birthdays in the next {days} days')
+
 
 
 
@@ -107,7 +119,7 @@ delete_parser.add_argument('--name', required=True)
 
 #nextbirthday parser
 next_birthday_parser = subparsers.add_parser('nextbirthday', help='see the next birthdays in the list in a given time period')
-next_birthday_parser.add_argument('--nextbirthday', required=True)
+next_birthday_parser.add_argument('--days', required=True)
 
 add_parser.set_defaults(func=addContact)
 list_parser.set_defaults(func=listContact)

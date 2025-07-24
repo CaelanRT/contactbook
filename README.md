@@ -9,14 +9,17 @@ A simple command-line contact book tool written in Python. Easily add, list, and
 - Add new contacts with name, phone number, and birthday.
 - List all saved contacts in the contact book.
 - Delete a contact by name.
+- View upcoming birthdays within a specified number of days.
 - Persistent storage using a `contactbook.json` file.
-- Runs from anywhere using standard CLI flags.
+- Intelligent date parsing for birthdays.
+- JSON-based data serialization and deserialization.
 
 ---
 
 ## 🛠 Requirements
 
 - Python 3.6+
+- `python-dateutil` library for advanced date parsing
 
 ---
 
@@ -27,6 +30,12 @@ Clone the repo and navigate into the project folder:
 ```bash
 git clone https://github.com/yourusername/contactbook-cli.git
 cd contactbook-cli
+```
+
+Install the required dependency:
+
+```bash
+pip install python-dateutil
 ```
 
 (If you're not using Git, just download the `.py` file.)
@@ -59,6 +68,14 @@ python3 contactbook.py list
 python3 contactbook.py delete --name "Alice"
 ```
 
+### 🎂 View Upcoming Birthdays
+
+```bash
+python3 contactbook.py nextbirthday --days 30
+```
+
+This will show all contacts with birthdays in the next 30 days.
+
 ---
 
 ## 🗂 Data Storage
@@ -74,10 +91,10 @@ Each contact includes:
 
 ## 💡 Future Ideas
 
-- Show upcoming birthdays.
 - Edit contacts.
 - Add contact groups or tags.
 - Export to CSV.
+- Birthday reminders and notifications.
 
 ---
 

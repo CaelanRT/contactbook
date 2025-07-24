@@ -4,9 +4,8 @@ import json
 from dateutil import parser as date_parser
 from datetime import datetime, timedelta
 
-#make a command line tool with flags that is a contact book that will also output birthdays coming up
+#internal todo
 #make it a script so that it can be run from anywehre in your command prompt
-#add taht you need to install dateutil in your dependencies
 
 file_path = "contactbook.json"
 

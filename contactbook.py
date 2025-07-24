@@ -1,10 +1,11 @@
 import argparse
 import os
 import json
+from dateutil import parser as date_parser
 
 #make a command line tool with flags that is a contact book that will also output birthdays coming up
 #make it a script so that it can be run from anywehre in your command prompt
-#add ability to remove contacts
+#add taht you need to install dateutil in your dependencies
 
 file_path = "contactbook.json"
 
@@ -23,22 +24,28 @@ class Contact:
 
     #to string of the object
     def __str__(self):
-        return f"Name: {self.name} Phone Number: {self.phoneNumber} Birthday: {self.birthday}"
+        birthday_date = self.birthday.strftime("%Y-%m-%d") if hasattr(self.birthday, 'strftime') else str(self.birthday)
+        return f"Name: {self.name} Phone Number: {self.phoneNumber} Birthday: {birthday_date}"
     
     #setting the attributes to a dictionary to serialize
     def to_dict(self):
         return {
             'name': self.name,
             'phone': self.phoneNumber,
-            'birthday': self.birthday
+            'birthday': self.birthday.isoformat() if hasattr(self.birthday, 'isoformat') else str(self.birthday)
         }
         
     
 #add contact method
 def addContact(args):
-    contact = Contact(args.name, args.phone, args.birthday)
-    contacts.append(contact)
-    print(f'Added {contact.name} to the contact book')
+    try:
+        date_obj = date_parser.parse(args.birthday)
+        contact = Contact(args.name, args.phone, date_obj)
+        contacts.append(contact)
+        print(f'Added {contact.name} to the contact book')
+    except ValueError as e:
+        print(f'Error: Invalid date format "{args.birthday}". Please use a valid date format like YYYY-MM-DD.')
+        return
 
 #list contacts method
 def listContact(args):
@@ -53,6 +60,12 @@ def deleteContact(args):
     
     print(f'Deleted {args.name} to the contact book')
 
+def nextBirthday(args):
+    brange = args.nextbirthday
+    #for contact in contacts:
+
+
+
 #your instance variables
 contacts = []
 
@@ -65,7 +78,8 @@ except json.JSONDecodeError:
 
 #for each item, create an object and append it to the contacts list
 for item in loadedlist:
-    contact = Contact(item["name"], item["phone"], item["birthday"])
+    birthday = date_parser.parse(item["birthday"]) if isinstance(item["birthday"], str) else item["birthday"]
+    contact = Contact(item["name"], item["phone"], birthday)
     contacts.append(contact)
 
 #main parser
@@ -91,9 +105,14 @@ list_parser = subparsers.add_parser('list', help='list the contacts in the conta
 delete_parser = subparsers.add_parser('delete', help='delete a contact')
 delete_parser.add_argument('--name', required=True)
 
+#nextbirthday parser
+next_birthday_parser = subparsers.add_parser('nextbirthday', help='see the next birthdays in the list in a given time period')
+next_birthday_parser.add_argument('--nextbirthday', required=True)
+
 add_parser.set_defaults(func=addContact)
 list_parser.set_defaults(func=listContact)
 delete_parser.set_defaults(func=deleteContact)
+next_birthday_parser.set_defaults(func=nextBirthday)
 
 args = parser.parse_args()
 
